@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script type="text/javascript" src="static/js/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="static/js/Ajax.js"></script>
+        <link href="static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+        <script src="static/js/bootstrap-treeview.js"></script>
+
+        <link href="static/css/app.css" rel="stylesheet">
+
+        <title>webChat</title>
+    </head>
+    <body style="padding-top:50px;">
+        <!-- 提示工具 -->
+        <div class="modal fade" id="showInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" style="text-align:center"></h4>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-1">
+                s
+            </div>
+            <div class="col-sm-10" >
+
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row">
+                            <!-- 左边 -->
+                            <div class="col-sm-4">
+                                <div class="well well-sm">
+                                    <!-- 用户信息 -->
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <img src="img/bak.jpg" alt="" class="img-thumbnail" style="height:100px">
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <h3>
+                                            <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                                            <span id="userName"></span>
+                                            <div class="btn-group">
+                                                <button type="button" id="userStatus" class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    在线&nbsp;<span class="glyphicon glyphicon-eye-open">
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a onclick="changeStatus(this)" >在线&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>
+                                                    <li><a onclick="changeStatus(this)" >离线&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>
+                                                    <li><a onclick="changeStatus(this)" >下线&nbsp;&nbsp;<span class="glyphicon glyphicon-remove-sign"></a></li>
+                                                </ul>
+                                            </div>
+                                            <button type="button" id="userLogout" onclick="logOut()" class="btn btn-danger btn-xs">
+                                                退出
+                                            </button>
+                                            </h3>
+                                            <strong>
+                                                <span class="glyphicon glyphicon-envelope"></span>
+                                                <a id="userEmail"></a>
+                                            </strong>
+                                            <br>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div>
+                                        <blockquote class="">
+                                          <p>如果你有梦想，就要去捍卫它</p>
+                                          <footer id="userWordName" class="blockquote-reverse"></footer>
+                                        </blockquote>
+                                    </div>
+
+                                </div>
+                                <!-- 快速定位分组 -->
+                                <div style="clear:both;" class="affix-top">
+                                    <div style="width:40%;float:left;margin:0px;padding:0px;"><hr style="height:20px;"/></div>
+                                    <div style="width:20%;float:left;text-align:center"><img src="img/friend.png" style="height:30px"></div>
+                                    <div style="width:40%;float:right;margin:0px;padding:0px;"><hr style="height:20px;"/></div>
+
+                                </div>
+                                <!-- 所有好友信息 -->
+                                <div class="col-sm-12">
+                                    <div id="groupFriend" style="overflow:scroll;height:600px">
+
+                                        <div id="allFriend">
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 聊天框 -->
+                            <div class="col-sm-8">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <!-- 左边 -->
+                                        ssd
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-1">
+                f
+            </div>
+        </div>
+        <script src="static/js/app.js"></script>
+        <script src="static/js/webChat.js"></script>
+        <script>
+
+        </script>
+    </body>
+</html>
