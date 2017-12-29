@@ -79,7 +79,19 @@
                                 <!-- 快速定位分组 -->
                                 <div style="clear:both;" class="affix-top">
                                     <div style="width:40%;float:left;margin:0px;padding:0px;"><hr style="height:20px;"/></div>
-                                    <div style="width:20%;float:left;text-align:center"><img src="img/friend.png" style="height:30px"></div>
+                                    <div style="width:20%;float:left;text-align:center">
+                                        <!-- <img src="img/friend.png" style="height:30px"> -->
+                                        <div class="btn-group">
+                                            <button type="button" id="userGroup" class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                分组&nbsp;<span class="glyphicon glyphicon-list">
+                                            </button>
+                                            <ul class="dropdown-menu" id="allGroup">
+                                                <li><a >在线&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>
+                                                <li><a >离线&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>
+                                                <li><a >下线&nbsp;&nbsp;<span class="glyphicon glyphicon-remove-sign"></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                     <div style="width:40%;float:right;margin:0px;padding:0px;"><hr style="height:20px;"/></div>
 
                                 </div>
@@ -98,7 +110,50 @@
                                 <div class="panel panel-default">
                                     <div class="panel-body">
                                         <!-- 左边 -->
-                                        ssd
+                                        <nav class="navbar navbar-default">
+                                          <div class="container-fluid">
+                                            <!-- Brand and toggle get grouped for better mobile display -->
+                                            <div class="navbar-header">
+                                              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                                <span class="sr-only">Toggle navigation</span>
+                                                <span class="icon-bar"></span>
+                                                <span class="icon-bar"></span>
+                                                <span class="icon-bar"></span>
+                                              </button>
+                                              <a class="navbar-brand" href="#">webChat</a>
+                                            </div>
+
+                                            <!-- Collect the nav links, forms, and other content for toggling -->
+                                            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                                <!-- <ul class="nav nav-tabs navbar-nav">
+                                                    <li role="presentation"><a href="#">Home<span class="glyphicon glyphicon-remove"></span></a></li>
+                                                    <li role="presentation" class="active"><a href="#">Profile</a></li>
+                                                    <li role="presentation"><a href="#">Messages</a></li>
+                                                </ul> -->
+                                              <form class="navbar-form navbar-left">
+                                                <div class="form-group">
+                                                  <input type="text" class="form-control" placeholder="Search">
+                                                </div>
+                                                <button type="submit" class="btn btn-default">搜索</button>
+                                              </form>
+                                              <ul class="nav navbar-nav navbar-right">
+                                                <li><a href="#">未读消息</a></li>
+                                                <li><a href="#">与朋友的功能</a></li>
+                                                <li class="dropdown">
+                                                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">菜单<span class="caret"></span></a>
+                                                  <ul class="dropdown-menu">
+                                                    <li><a id="addGroup">添加分组</a></li>
+                                                    <li><a href="#">添加朋友</a></li>
+                                                    <li><a href="#">修改自己信息</a></li>
+                                                    <li role="separator" class="divider"></li>
+                                                    <li><a href="#">退出</a></li>
+                                                  </ul>
+                                                </li>
+                                              </ul>
+                                            </div><!-- /.navbar-collapse -->
+                                          </div><!-- /.container-fluid -->
+                                        </nav>
+
                                     </div>
                                 </div>
                             </div>
@@ -110,6 +165,29 @@
             <div class="col-sm-1">
                 f
             </div>
+        </div>
+        <!-- 添加分组 -->
+        <div class="modal fade" id="addGroupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" style="text-align:center">添加分组</h4>
+              </div>
+              <div class="modal-body">
+                  <form id="groupInfo">
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">分组名</label>
+                      <input type="text" class="form-control" name="groupName" id="groupName" placeholder="分组名">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-primary" id="addGroupCoomit">添加</button>
+            </div>
+            </div>
+          </div>
         </div>
         <script src="static/js/app.js"></script>
         <script src="static/js/webChat.js"></script>

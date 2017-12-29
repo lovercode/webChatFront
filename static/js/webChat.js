@@ -17,3 +17,11 @@ function changeStatus(self) {
 function logOut(){
     app.logOut();
 }
+$("#addGroup").click(function(){
+    $("#addGroupModal").modal("show");
+});
+$("#addGroupCoomit").click(function(){
+    $("#addGroupModal").modal("hide");
+    app.addGroup();
+    
+})
