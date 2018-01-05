@@ -80,28 +80,38 @@
                                 </div>
                                 <!-- 快速定位分组 -->
                                 <div style="clear:both;" class="affix-top">
-                                    <div style="width:40%;float:left;margin:0px;padding:0px;"><hr style="height:20px;"/></div>
-                                    <div style="width:20%;float:left;text-align:center">
+                                    <div style="width:30%;float:left;margin:0px;padding:0px;"><hr style="height:20px;"/></div>
+                                    <div style="width:40%;float:left;text-align:center">
                                         <!-- <img src="img/friend.png" style="height:30px"> -->
                                         <div class="btn-group">
                                             <button type="button" id="userGroup" class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 分组&nbsp;<span class="glyphicon glyphicon-list">
                                             </button>
+                                            &nbsp;&nbsp;&nbsp;
+                                            <button type="button" id="allChatRoomBtn" class="btn btn-info btn-xs" style="margin-left:5px">
+                                                群聊
+                                            </button>
                                             <ul class="dropdown-menu" id="allGroup">
-                                                <li><a >在线&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>
-                                                <li><a >离线&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>
-                                                <li><a >下线&nbsp;&nbsp;<span class="glyphicon glyphicon-remove-sign"></a></li>
                                             </ul>
                                         </div>
                                     </div>
-                                    <div style="width:40%;float:right;margin:0px;padding:0px;"><hr style="height:20px;"/></div>
+                                    <div style="width:30%;float:right;margin:0px;padding:0px;"><hr style="height:20px;"/></div>
 
                                 </div>
                                 <!-- 所有好友信息 -->
-                                <div class="col-sm-12">
+                                <div class="col-sm-12" id="allFriendDiv">
                                     <div id="groupFriend" style="overflow:scroll;height:580px">
 
                                         <div id="allFriend">
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!-- 所有群聊 -->
+                                <div class="col-sm-12" id="allChatRoomDiv" style="display:none;">
+                                    <div id="chatRoom" style="overflow:scroll;height:580px">
+
+                                        <div id="allChatRoom">
                                         </div>
 
                                     </div>

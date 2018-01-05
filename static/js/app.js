@@ -13,6 +13,9 @@ var webChat = {
     activeChatUserId:"",
     //当前聊天记录加载的页数
     activeChatPageNum:0,
+    //所有群聊
+    allChatRoom:"",
+    chatType:0,
     //获取朋友列表
     getMenu: function () {
         var self = this;
@@ -66,6 +69,10 @@ var webChat = {
                         '<strong class="friendName">'+this.friends[key].friends[key1].friendInfo.userName+
 
                         '</strong>'+
+                        '<p>'+
+                        this.friends[key].friends[key1].friendInfo.userWord
+                        '</p>'+
+
                         '</div>';
             }
             html += friend;
@@ -168,7 +175,7 @@ var webChat = {
     },
     //获取当前聊天对象的未读消息
     getMsgWithUser: function(){
-        if(app.activeChatUserId != ""){
+        if(app.chatType == 1 && app.activeChatUserId != ""){
             Ajax(
                 "POST",
                 "chat/getByUser",
@@ -202,7 +209,7 @@ var webChat = {
     //发送消息
     sendMsgToUser:function(){
         var self = this;
-        if(app.activeChatUserId != ""){
+        if(app.chatType == 1 && app.activeChatUserId != ""){
             Ajax(
                 "POST",
                 "chat",
@@ -218,9 +225,10 @@ var webChat = {
             $("#showInfo").showMsg("请先选择聊天的好友");
         }
     },
+    //发送抖一抖消息
     sharkUser: function(){
         var self = this;
-        if(app.activeChatUserId != ""){
+        if(app.chatType == 1 && app.activeChatUserId != ""){
             Ajax(
                 "POST",
                 "chat/sharkUser",
@@ -235,6 +243,45 @@ var webChat = {
         }else {
             $("#showInfo").showMsg("请先选择聊天的好友");
         }
+    },
+    //获取所有群聊
+    getAllChatRoom:function(){
+        var self = this;
+        Ajax(
+            "GET",
+            "chatRoom",
+            null,
+            function(res){
+                app.allChatRoom = res.data;
+                self.showAllChatRoom();
+            }
+        )
+        return this;
+    },
+    //显示所有群聊
+    showAllChatRoom:function(){
+        var html = '';
+        for(var key in this.allChatRoom){
+            html += '<div class="well well-xs chatRoomClick" style="clear:both;cursor:pointer;">'+
+                    '<input type="hidden" class="chatRoomId" value="'+this.allChatRoom[key].roomId+'">'+
+                    '<div class="col-sm-3">'+
+                    '<div class="btn-group">'+
+                        '<button type="button" id="userStatus" class="btn btn-primay btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+                            '<img src="img/bak.jpg" style="height:30px;">'+
+                        '</button>'+
+                        '<ul class="dropdown-menu">'+
+                            '<li><a onclick="changeStatus(this)" >退出群聊&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>'+
+                            '<li><a onclick="changeStatus(this)" >查看成员&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>'+
+                        '</ul>'+
+                    '</div>'+
+
+                    '</div>'+
+                    '<strong class="friendName">'+this.allChatRoom[key].roomName+
+
+                    '</strong>'+
+                    '</div>';
+        }
+        $("#allChatRoom").html(html);
     }
 
 };
