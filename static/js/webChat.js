@@ -65,6 +65,13 @@ $(document).on("click",".userClick",function(){
     app.activeChatUserId = $(this).children(".userId").val();
     $("#activeUser").html($(this).children(".friendName").text());
 });
+//开始群聊
+$(document).on("click",".chatRoomClick",function(){
+    app.chatType = 2;
+    app.chatDiv.html("");
+    app.activeChatRoomId = $(this).children(".chatRoomId").val();
+    $("#activeUser").html($(this).children(".chatRoomName").text());
+});
 //添加朋友确认
 $("#addFriendCommit").click(function(){
     app.addFriendOk();
@@ -83,6 +90,11 @@ $("#chatInfo").on("scroll",function(){
 setInterval(function() {
     app.getMsgWithUser();
 },2000);
+//定时获取群聊消息
+setInterval(function() {
+    app.getMsgWithRoom();
+},2000);
+
 //单独聊天
 $("#userGroup").click(function(){
     app.getMenu();

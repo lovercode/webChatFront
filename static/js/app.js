@@ -15,6 +15,9 @@ var webChat = {
     activeChatPageNum:0,
     //所有群聊
     allChatRoom:"",
+    //当前聊天群
+    activeChatRoomId:"",
+    //聊天类型，群聊还是单独
     chatType:0,
     //获取朋友列表
     getMenu: function () {
@@ -194,6 +197,23 @@ var webChat = {
             )
         }
     },
+    //获取当前群聊对象的未读消息
+    getMsgWithRoom: function(){
+        if(app.chatType == 2 && app.activeChatRoomId != ""){
+            Ajax(
+                "POST",
+                "chat/getByRoom",
+                {roomId:app.activeChatRoomId},
+                function(res) {
+                    for(var key in res.data){
+
+                        app.addMsgToDiv(res.data[key].fromUserInfo.userName+":"+res.data[key].chatInfo,"left");
+                    }
+
+                }
+            )
+        }
+    },
     //添加信息到聊天框
     addMsgToDiv:function(msg,direction) {
         var html = '<div class="well well-sm col-sm-6" style="float:'+
@@ -221,8 +241,20 @@ var webChat = {
                     self.addMsgToDiv(app.editor.txt.html(),"right");
                 }
             )
+        }else if(app.chatType == 2 && app.activeChatRoomId != ""){
+            Ajax(
+                "POST",
+                "chat/sendMsgToChatRoom",
+                {
+                    chatInfo:app.editor.txt.html(),
+                    chatTo:app.activeChatRoomId
+                },
+                function(res) {
+                    self.addMsgToDiv(app.editor.txt.html(),"right");
+                }
+            )
         }else {
-            $("#showInfo").showMsg("请先选择聊天的好友");
+            $("#showInfo").showMsg("请先选择聊天对象");
         }
     },
     //发送抖一抖消息
@@ -276,13 +308,14 @@ var webChat = {
                     '</div>'+
 
                     '</div>'+
-                    '<strong class="friendName">'+this.allChatRoom[key].roomName+
+                    '<strong class="chatRoomName">'+this.allChatRoom[key].roomName+
 
                     '</strong>'+
                     '</div>';
         }
         $("#allChatRoom").html(html);
-    }
+    },
+
 
 };
 var app = Object.create(webChat);
