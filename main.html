@@ -14,7 +14,7 @@
 
         <title>webChat</title>
     </head>
-    <body style="padding-top:50px;">
+    <body style="padding-top:20px;">
         <!-- 提示工具 -->
         <div class="modal fade" id="showInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
           <div class="modal-dialog" role="document">
@@ -31,7 +31,7 @@
             <div class="col-sm-1">
                 s
             </div>
-            <div class="col-sm-10" >
+            <div id="main" class="col-sm-10">
 
                 <div class="panel panel-default">
                     <div class="panel-body">
@@ -41,8 +41,8 @@
                                 <div class="well well-sm">
                                     <!-- 用户信息 -->
                                     <div class="row">
-                                        <div class="col-sm-4">
-                                            <img src="img/bak.jpg" alt="" class="img-thumbnail" style="height:100px">
+                                        <div class="col-sm-4" id="userImg">
+                                            <img src="img/bak.jpg" class="img-thumbnail" style="height:100px">
                                         </div>
                                         <div class="col-sm-8">
                                             <h3>
@@ -72,7 +72,7 @@
                                     <br>
                                     <div>
                                         <blockquote class="">
-                                          <p>如果你有梦想，就要去捍卫它</p>
+                                          <p id="userWord">如果你有梦想，就要去捍卫它</p>
                                           <footer id="userWordName" class="blockquote-reverse"></footer>
                                         </blockquote>
                                     </div>
@@ -99,7 +99,7 @@
                                 </div>
                                 <!-- 所有好友信息 -->
                                 <div class="col-sm-12">
-                                    <div id="groupFriend" style="overflow:scroll;height:600px">
+                                    <div id="groupFriend" style="overflow:scroll;height:580px">
 
                                         <div id="allFriend">
                                         </div>
@@ -122,7 +122,7 @@
                                                 <span class="icon-bar"></span>
                                                 <span class="icon-bar"></span>
                                               </button>
-                                              <a class="navbar-brand" href="#">webChat</a>
+                                              <a class="navbar-brand" href="#" id="activeUser">webChat</a>
                                             </div>
 
                                             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -139,13 +139,14 @@
                                                 <button type="submit" class="btn btn-default">搜索</button>
                                               </form>
                                               <ul class="nav navbar-nav navbar-right">
+                                                <li><a style="cursor:pointer;" id="sharkUser">抖一抖</a></li>
                                                 <li><a href="#">未读消息</a></li>
                                                 <li><a href="#">与朋友的功能</a></li>
                                                 <li class="dropdown">
                                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">菜单<span class="caret"></span></a>
                                                   <ul class="dropdown-menu">
                                                     <li><a id="addGroup">添加分组</a></li>
-                                                    <li><a href="#">添加朋友</a></li>
+                                                    <li><a id="addFriend">添加朋友</a></li>
                                                     <li><a href="#">修改自己信息</a></li>
                                                     <li role="separator" class="divider"></li>
                                                     <li><a href="#">退出</a></li>
@@ -155,12 +156,23 @@
                                             </div><!-- /.navbar-collapse -->
                                           </div><!-- /.container-fluid -->
                                         </nav>
+                                        <!-- 聊天记录 -->
                                         <div id="chatInfo" style="overflow:scroll;height:400px">
+                                            <div class="well well-sm col-sm-6" style="float:left">
+                                                from
+                                            </div>
+                                            <div  style="clear:both;" >
+                                            </div>
+                                            <div class="well well-sm col-sm-6" style="float:right">
+                                                to
+                                            </div>
+                                            <div  style="clear:both;" >
+                                            </div>
                                         </div>
 
                                         <div id="editor">
                                         </div>
-                                        <button type="button" id="userGroup" class="btn btn-danger btn-lg" >
+                                        <button type="button" id="sendMsg" class="btn btn-danger btn-lg" >
                                             发送
                                         </button>
 
@@ -195,7 +207,65 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-              <button type="button" class="btn btn-primary" id="addGroupCoomit">添加</button>
+              <button type="button" class="btn btn-primary" id="addGroupCommit">添加</button>
+            </div>
+            </div>
+          </div>
+        </div>
+        <!-- 搜索朋友 -->
+        <div class="modal fade" id="addFriendModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" style="text-align:center">查找朋友</h4>
+              </div>
+              <div class="modal-body">
+                  <!-- <form> -->
+                <div class="form-group">
+                    <input type="text" id="addFriendKey" class="form-control" placeholder="支持id，名字，邮箱检索">
+                </div>
+                <button id="addFriendBtn" class="btn btn-default">搜索</button>
+                <br>
+                <br>
+                <br>
+                <!-- </form> -->
+                <div id="searchFriendRes">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <!-- <button type="button" class="btn btn-primary" id="addFriendCommit">添加</button> -->
+            </div>
+            </div>
+          </div>
+        </div>
+        <!-- 设置添加朋友的分组 -->
+        <div class="modal fade" id="addFriendInfoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" style="text-align:center">验证消息</h4>
+              </div>
+              <div class="modal-body">
+                  <form id="addFriendInfo">
+                    <div class="form-group">
+                        <input id="addFriendId" name="friendId" class="form-control"  type="hidden">
+                      <label for="exampleInputEmail1">分组名</label>
+                      <select class="form-control" id="addFriendGroup" name="groupId">
+
+                      </select>
+                        <label for="name">验证消息</label>
+                        <textarea class="form-control" name="validateInfo" rows="3"></textarea>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-primary" id="addFriendCommit">添加</button>
             </div>
             </div>
           </div>
@@ -203,10 +273,13 @@
         <script src="static/js/app.js"></script>
         <script src="static/js/webChat.js"></script>
         <script>
-        var E = window.wangEditor
-        var editor = new E('#editor')
+        var E = window.wangEditor;
+        app.editor = new E('#editor');
         // 或者 var editor = new E( document.getElementById('editor') )
-        editor.create()
+        app.editor.customConfig.zIndex = 1;
+        app.editor.create();
+        app.chatDiv = $("#chatInfo");
+
         </script>
     </body>
 </html>

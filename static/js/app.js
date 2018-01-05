@@ -1,9 +1,18 @@
 var webChat = {
+    //app 名字
     name:"webChat",
-    menu:"",
+    //所有朋友和分组
     friends:"",
+    //我的信息
     myInfo:"",
-    otherInfo:"",
+    //聊天编辑器
+    editor:"",
+    //聊天div
+    chatDiv:"",
+    //当前聊天的人
+    activeChatUserId:"",
+    //当前聊天记录加载的页数
+    activeChatPageNum:0,
     //获取朋友列表
     getMenu: function () {
         var self = this;
@@ -23,6 +32,7 @@ var webChat = {
         });
         return self;
     },
+    //显示朋友
     showMenu:function() {
         var data = [];
         var html = "";
@@ -38,7 +48,8 @@ var webChat = {
             var friend = "";
             for(var key1 in this.friends[key].friends)
             {
-                friend += '<div class="well well-xs" style="clear:both;">'+
+                friend += '<div class="well well-xs userClick" style="clear:both;cursor:pointer;">'+
+                        '<input type="hidden" class="userId" value="'+this.friends[key].friends[key1].friendId+'">'+
                         '<div class="col-sm-3">'+
                         '<div class="btn-group">'+
                             '<button type="button" id="userStatus" class="btn btn-primay btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
@@ -52,7 +63,7 @@ var webChat = {
                         '</div>'+
 
                         '</div>'+
-                        '<strong>'+this.friends[key].friends[key1].friendId+
+                        '<strong class="friendName">'+this.friends[key].friends[key1].friendInfo.userName+
 
                         '</strong>'+
                         '</div>';
@@ -64,21 +75,27 @@ var webChat = {
         $("#allFriend").html(html);
         return this;
     },
+    //显示自己信息
     showMyInfo:function() {
         $("#userName").html(this.myInfo.userName);
         $("#userEmail").html(this.myInfo.userEmail);
+        $("#userWord").html(this.myInfo.userWord);
+
         $("#userEmail").attr("href","mailto:"+this.myInfo.userEmail);
         $("#userWordName").html(this.myInfo.userName);
 
     },
+    //改变状态
     changeStatus:function(status){
 
     },
+    //退出
     logOut:function(){
         Ajax("GET","user/logout",null,function(res) {
             $("#showInfo").showMsg(res.msg);
         });
     },
+    //添加分组
     addGroup: function() {
         var self = this;
         Ajax(
@@ -90,5 +107,135 @@ var webChat = {
             }
         );
     },
+    //戳一戳
+    shake:function() {
+        for(var j=0; j<3; j++)
+        {
+            for(var i=0; i<10; i++)
+            {
+                $("#main").animate({left:'+='+i*2+'px'},i);
+            }
+            for(var i=0; i<10; i++)
+            {
+                $("#main").animate({left:'-='+i*2+'px'},i);
+            }
+        }
+    },
+    //搜索朋友
+    addFriend:function() {
+        Ajax(
+            "POST","user/search",
+            {key:$("#addFriendKey").val()},
+            function(res){
+                if(res.code != 200)
+                {
+                    $("#addFriendModal").modal("hide");
+                }
+                var html = '';
+                for(var key in res.data){
+                    html += '<div class="well well-xs row">'+
+                                '<div class="col-sm-3">'+
+                                    '<div class="btn-group">'+
+
+                                        '<img src="'+res.data[key].userImg+'" style="height:30px;">'+
+
+                                    '</div>'+
+
+                                '</div>'+
+                                '<div class="col-sm-3">'+
+                                    '<strong>'+res.data[key].userName+
+                                    '</strong>'+
+                                '</div>'+
+                                '<div class="col-sm-3">'+
+                                    '<button type="button" id="userStatus" value="'+res.data[key].userId+'" class="btn btn-danger btn-xs addFriendBtnOk">加好友'+
+                                    '</button>'+
+                                '</div>'+
+                            '</div>';
+                }
+                $("#searchFriendRes").html(html);
+            }
+        )
+    },
+    //添加、好友
+    addFriendOk:function() {
+        Ajax(
+            "POST","friend",
+            $("#addFriendInfo").serializeJson(),
+            function(res) {
+                $("#showInfo").showMsg(res.msg);
+            }
+        )
+    },
+    //获取当前聊天对象的未读消息
+    getMsgWithUser: function(){
+        if(app.activeChatUserId != ""){
+            Ajax(
+                "POST",
+                "chat/getByUser",
+                {userId:app.activeChatUserId},
+                function(res) {
+                    for(var key in res.data){
+                        if(res.data[key].chatType == "抖一抖"){
+                            app.addMsgToDiv('<p style="color:red">对方抖了你一下</p>',"left");
+                            app.shake();
+                        }else{
+                            app.addMsgToDiv(res.data[key].chatInfo,"left");
+                        }
+                    }
+
+                }
+            )
+        }
+    },
+    //添加信息到聊天框
+    addMsgToDiv:function(msg,direction) {
+        var html = '<div class="well well-sm col-sm-6" style="float:'+
+                    direction
+                    +'">'+
+                    msg+
+                    '</div>'+
+                    '<div  style="clear:both;" >';
+        app.chatDiv.append(html);
+        app.chatDiv.scrollTop(app.chatDiv.position().top+app.chatDiv.scrollTop());
+
+    },
+    //发送消息
+    sendMsgToUser:function(){
+        var self = this;
+        if(app.activeChatUserId != ""){
+            Ajax(
+                "POST",
+                "chat",
+                {
+                    chatInfo:app.editor.txt.html(),
+                    chatTo:app.activeChatUserId
+                },
+                function(res) {
+                    self.addMsgToDiv(app.editor.txt.html(),"right");
+                }
+            )
+        }else {
+            $("#showInfo").showMsg("请先选择聊天的好友");
+        }
+    },
+    sharkUser: function(){
+        var self = this;
+        if(app.activeChatUserId != ""){
+            Ajax(
+                "POST",
+                "chat/sharkUser",
+                {
+                    chatTo:app.activeChatUserId
+                },
+                function(res) {
+                    self.addMsgToDiv('<p style="color:red">你抖了对方一下</p>',"right");
+                    self.shake();
+                }
+            )
+        }else {
+            $("#showInfo").showMsg("请先选择聊天的好友");
+        }
+    }
+
 };
 var app = Object.create(webChat);

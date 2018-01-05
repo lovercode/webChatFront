@@ -14,12 +14,13 @@ function Ajax(type, url, data, success, failed){
             success: function(res){
                 if(res.code == 200)
                 {
-                    success(res);
+
                 }else if(res.code==302){
                     window.location.href="http://127.0.0.1/webChat/index.html";
                 }else {
                     $("#showInfo").showMsg(res.msg);
                 }
+                success(res);
 
             },
 
