@@ -4,6 +4,8 @@ $(document).ready(function(){
     app.getMenu().getMyInfo().getAllChatRoom();
     $("#app_name").html(app.name);
 
+
+
     // alert(app.myInfo.userName);
 });
 $(".changeUserStatus").click(function(){
@@ -57,6 +59,7 @@ $(document).on("click",".addFriendBtnOk",function(){
             '</option>';
     }
     $("#addFriendGroup").html(html);
+
 });
 //开始和朋友聊天
 $(document).on("click",".userClick",function(){
@@ -85,6 +88,23 @@ $(document).on("click",".chatRoomClick",function(){
     app.activeChatRoomId = $(this).children(".chatRoomId").val();
     $("#activeUser").html($(this).children(".chatRoomName").text());
 });
+$(document).on("click",".agreeAddFriend",function(){
+    app.validateUserId = $(this).val();
+    var html = '';
+    for(var key in app.friends)
+    {
+        html += '<option value="'+app.friends[key].gFgroup.groupId+'">'+
+            app.friends[key].gFgroup.groupName+
+            '</option>';
+    }
+    $("#dealValidateGroup").html(html);
+    $("#dealValidateModal").modal("show");
+});
+$(document).on("click",".disAgreeAddFriend",function(){
+    app.validateUserId = $(this).val();
+    app.dealValidateMsg(-1);
+});
+
 //添加朋友确认
 $("#addFriendCommit").click(function(){
     app.addFriendOk();
@@ -107,7 +127,7 @@ setInterval(function() {
 setInterval(function() {
     app.getMsgWithRoom();
 },3000);
-
+//获取待处理消息
 setInterval(function() {
     app.getNeedDealMsg();
 },2000);
@@ -124,4 +144,8 @@ $("#allChatRoomBtn").click(function(){
     app.getAllChatRoom();
     $("#allChatRoomDiv").show();
     $("#groupFriend").hide();
-})
+});
+//发送处理请求
+$("#agreeValidateBtn").click(function(){
+    app.dealValidateMsg(1);
+});

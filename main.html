@@ -155,7 +155,7 @@
                                                   <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">未读消息
                                                       <span class="badge" id="needDealSum">0</span></a>
                                                   <ul class="dropdown-menu" id="allNeedDealMsg">
-                                                      
+
 
                                                   </ul>
                                                 </li>
@@ -176,7 +176,7 @@
                                         </nav>
                                         <!-- 聊天记录 -->
                                         <div id="chatInfo" style="overflow:scroll;height:400px">
-                                            <div class="well well-sm col-sm-6" style="float:left">
+                                            <!-- <div class="well well-sm col-sm-6" style="float:left">
                                                 from
                                             </div>
                                             <div  style="clear:both;" >
@@ -185,7 +185,7 @@
                                                 to
                                             </div>
                                             <div  style="clear:both;" >
-                                            </div>
+                                            </div> -->
                                         </div>
 
                                         <div id="editor">
@@ -284,6 +284,33 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
               <button type="button" class="btn btn-primary" id="addFriendCommit">添加</button>
+            </div>
+            </div>
+          </div>
+        </div>
+        <!-- 设置同意好友请求的id -->
+        <div class="modal fade" id="dealValidateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" style="text-align:center">请选择分组</h4>
+              </div>
+              <div class="modal-body">
+                  <form id="validateFrom">
+                    <div class="form-group">
+
+                      <label for="exampleInputEmail1">分组名</label>
+                      <select class="form-control" id="dealValidateGroup" name="friendId">
+
+                      </select>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-primary" id="agreeValidateBtn">添加</button>
             </div>
             </div>
           </div>

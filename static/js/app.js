@@ -19,6 +19,8 @@ var webChat = {
     activeChatRoomId:"",
     //聊天类型，群聊还是单独
     chatType:0,
+    //当前正在处理的用户请求id
+    validateUserId:"",
     //获取朋友列表
     getMenu: function () {
         var self = this;
@@ -57,23 +59,23 @@ var webChat = {
                 friend += '<div class="well well-xs userClick" style="clear:both;cursor:pointer;">'+
                         '<input type="hidden" class="userId" value="'+this.friends[key].friends[key1].friendId+'">'+
                         '<div class="col-sm-3">'+
-                        '<div class="btn-group">'+
-                            '<button type="button" id="userStatus" class="btn btn-primay btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
-                                '<img src="img/bak.jpg" style="height:30px;">'+
-                            '</button>'+
-                            '<ul class="dropdown-menu">'+
-                                '<li><a onclick="changeStatus(this)" >查看信息&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>'+
-                                '<li><a onclick="changeStatus(this)" >删除好友&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>'+
-                                '<li><a onclick="changeStatus(this)" >拉黑好友&nbsp;&nbsp;<span class="glyphicon glyphicon-remove-sign"></a></li>'+
-                            '</ul>'+
-                        '</div>'+
+                            '<div class="btn-group">'+
+                                '<button type="button" id="userStatus" class="btn btn-primay btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+                                    '<img src="img/bak.jpg" style="height:30px;">'+
+                                '</button>'+
+                                '<ul class="dropdown-menu">'+
+                                    '<li><a onclick="changeStatus(this)" >查看信息&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>'+
+                                    '<li><a onclick="changeStatus(this)" >删除好友&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>'+
+                                    '<li><a onclick="changeStatus(this)" >拉黑好友&nbsp;&nbsp;<span class="glyphicon glyphicon-remove-sign"></a></li>'+
+                                '</ul>'+
+                            '</div>'+
 
                         '</div>'+
                         '<strong class="friendName">'+this.friends[key].friends[key1].friendInfo.userName+
 
                         '</strong>'+
                         '<p>'+
-                        this.friends[key].friends[key1].friendInfo.userWord
+                        this.friends[key].friends[key1].friendInfo.userWord+
                         '</p>'+
 
                         '</div>';
@@ -250,7 +252,10 @@ var webChat = {
                     chatTo:app.activeChatRoomId
                 },
                 function(res) {
-                    self.addMsgToDiv(app.editor.txt.html(),"right");
+                    if(res.code == 200){
+
+                        self.addMsgToDiv(app.editor.txt.html(),"right");
+                    }
                 }
             )
         }else {
@@ -315,6 +320,7 @@ var webChat = {
         }
         $("#allChatRoom").html(html);
     },
+    //获取未处理消息
     getNeedDealMsg:function(){
         Ajax(
             "POST",
@@ -331,7 +337,7 @@ var webChat = {
                 for(var key in res.data.userMsg)
                 {
                     html += '<li class="userMsgNeedDeal" style="cursor:pointer;"><p class="id" hidden>'+
-                            res.data.userMsg[key].chatFrom+'</p><a><span class="name">'+
+                            res.data.userMsg[key].chatFrom+'</p><a><span class="badge">好友</span>&nbsp;<span class="name">'+
                             res.data.userMsg[key].fromUserInfo.userName+
                             '</span>&nbsp;&nbsp;<span class="badge" id="needDealSum">'+
                             res.data.userMsg[key].sum+
@@ -341,31 +347,42 @@ var webChat = {
                 for(var key in res.data.chatRoomMsg)
                 {
                     html += '<li class="chatRoomMsgNeedDeal" style="cursor:pointer;"><p class="id" hidden>'+
-                            res.data.chatRoomMsg[key].chatTo+'</p><a><span class="name">'+
+                            res.data.chatRoomMsg[key].chatTo+'</p><a><span class="badge">群</span>&nbsp;<span class="name">'+
                             res.data.chatRoomMsg[key].chatRoom.roomName+
                             '</span>&nbsp;&nbsp;<span class="badge" id="needDealSum">'+
                             res.data.chatRoomMsg[key].sum+
                             '</span></a></li>';
                     sum += res.data.chatRoomMsg[key].sum;
                 }
-                for(var key in res.data.userDouMsg)
-                {
-                    html += '<li class="userDouMsgNeedDeal" style="cursor:pointer;"><p class="id" hidden>'+
-                            res.data.userDouMsg[key].chatFrom+'</p><a><span class="name">'+
-                            res.data.userDouMsg[key].fromUserInfo.userName+
-                            '</span>&nbsp;&nbsp;<span class="badge" id="needDealSum">'+
-                            res.data.userDouMsg[key].sum+
-                            '</span></a></li>';
-                    sum += res.data.userDouMsg[key].sum;
-                }
                 for(var key in res.data.validateMsg)
                 {
                     html += '<li class="validateMsgNeedDeal" style="cursor:pointer;"><p class="id" hidden>'+
-                            res.data.validateMsg[key].friendId+'</p><a><span class="name">'+
+                            res.data.validateMsg[key].userId+'</p><a><span class="badge">好友请求</span>&nbsp;<span class="name">'+
                             res.data.validateMsg[key].friendInfo.userName+
                             '</span>&nbsp;&nbsp;<span class="badge" id="needDealSum">'+
                             res.data.validateMsg[key].validateInfo+
-                            '</span></a></li>';
+                            '</span>'+
+                            '&nbsp;&nbsp;<button type="button" class="btn btn-primary btn-xs agreeAddFriend" value="'+
+                            res.data.validateMsg[key].userId+
+                            '">同意</button>'+
+                            '&nbsp;&nbsp;<button type="button" class="btn btn-danger btn-xs disAgreeAddFriend" value="'+
+                            res.data.validateMsg[key].userId+
+                            '">拒绝</button>'+
+                            '</a></li>';
+                }
+                for(var key in res.data.userDouMsg)
+                {
+                    app.chatType = 1;
+                    app.chatDiv.html("");
+                    app.activeChatUserId = res.data.userDouMsg[key].chatFrom;
+                    $("#activeUser").html(res.data.userDouMsg[key].fromUserInfo.userName);
+                    // html += '<li class="userDouMsgNeedDeal" style="cursor:pointer;"><p class="id" hidden>'+
+                    //         res.data.userDouMsg[key].chatFrom+'</p><a><span class="name">'+
+                    //         res.data.userDouMsg[key].fromUserInfo.userName+
+                    //         '</span>&nbsp;&nbsp;<span class="badge" id="needDealSum">'+
+                    //         res.data.userDouMsg[key].sum+
+                    //         '</span></a></li>';
+                    // sum += res.data.userDouMsg[key].sum;
                 }
                 sum += eval(res.data.validateMsg).length;
                 // alert(sum);
@@ -374,6 +391,23 @@ var webChat = {
                 // for(var key in res.data){
                 //
                 // }
+            }
+        )
+    },
+    dealValidateMsg:function(status){
+        Ajax(
+            "POST",
+            "friend/dealValidate",
+            {
+                status:status,
+                groupId:$("#dealValidateGroup").val(),
+                friendId:app.validateUserId
+            },
+            function(res){
+                if(res.code == 200){
+                    $("#showInfo").showMsg(res.msg);
+                    $("#dealValidateModal").modal("hide");
+                }
             }
         )
     }
