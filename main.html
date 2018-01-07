@@ -112,7 +112,7 @@
                                     <div id="chatRoom" style="overflow:scroll;height:580px">
 
                                         <div id="allChatRoom">
-                                            
+
                                         </div>
 
                                     </div>
@@ -151,7 +151,14 @@
                                               </form>
                                               <ul class="nav navbar-nav navbar-right">
                                                 <li><a style="cursor:pointer;" id="sharkUser">抖一抖</a></li>
-                                                <li><a href="#">未读消息</a></li>
+                                                <li class="dropdown">
+                                                  <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">未读消息
+                                                      <span class="badge" id="needDealSum">0</span></a>
+                                                  <ul class="dropdown-menu" id="allNeedDealMsg">
+                                                      
+
+                                                  </ul>
+                                                </li>
                                                 <li><a href="#">与朋友的功能</a></li>
                                                 <li class="dropdown">
                                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">菜单<span class="caret"></span></a>

@@ -65,6 +65,19 @@ $(document).on("click",".userClick",function(){
     app.activeChatUserId = $(this).children(".userId").val();
     $("#activeUser").html($(this).children(".friendName").text());
 });
+//处理朋友weidu消息
+$(document).on("click",".userMsgNeedDeal",function(){
+    app.chatType = 1;
+    app.chatDiv.html("");
+    app.activeChatUserId = $(this).find(".id").text();
+    $("#activeUser").html($(this).find(".name").html());
+});
+$(document).on("click",".chatRoomMsgNeedDeal",function(){
+    app.chatType = 2;
+    app.chatDiv.html("");
+    app.activeChatRoomId = $(this).find(".id").text();
+    $("#activeUser").html($(this).find(".name").html());
+});
 //开始群聊
 $(document).on("click",".chatRoomClick",function(){
     app.chatType = 2;
@@ -93,7 +106,12 @@ setInterval(function() {
 //定时获取群聊消息
 setInterval(function() {
     app.getMsgWithRoom();
+},3000);
+
+setInterval(function() {
+    app.getNeedDealMsg();
 },2000);
+
 
 //单独聊天
 $("#userGroup").click(function(){

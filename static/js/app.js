@@ -315,6 +315,68 @@ var webChat = {
         }
         $("#allChatRoom").html(html);
     },
+    getNeedDealMsg:function(){
+        Ajax(
+            "POST",
+            "chat/getNoReadMsg",
+            null,
+            function(res){
+                var sum = 0;
+                // sum = eval(res.data.userMsg).length+
+                //     eval(res.data.chatRoomMsg).length+
+                //     eval(res.data.userDouMsg).length+
+                //     eval(res.data.validateMsg).length;
+
+                html = '';
+                for(var key in res.data.userMsg)
+                {
+                    html += '<li class="userMsgNeedDeal" style="cursor:pointer;"><p class="id" hidden>'+
+                            res.data.userMsg[key].chatFrom+'</p><a><span class="name">'+
+                            res.data.userMsg[key].fromUserInfo.userName+
+                            '</span>&nbsp;&nbsp;<span class="badge" id="needDealSum">'+
+                            res.data.userMsg[key].sum+
+                            '</span></a></li>';
+                    sum += res.data.userMsg[key].sum;
+                }
+                for(var key in res.data.chatRoomMsg)
+                {
+                    html += '<li class="chatRoomMsgNeedDeal" style="cursor:pointer;"><p class="id" hidden>'+
+                            res.data.chatRoomMsg[key].chatTo+'</p><a><span class="name">'+
+                            res.data.chatRoomMsg[key].chatRoom.roomName+
+                            '</span>&nbsp;&nbsp;<span class="badge" id="needDealSum">'+
+                            res.data.chatRoomMsg[key].sum+
+                            '</span></a></li>';
+                    sum += res.data.chatRoomMsg[key].sum;
+                }
+                for(var key in res.data.userDouMsg)
+                {
+                    html += '<li class="userDouMsgNeedDeal" style="cursor:pointer;"><p class="id" hidden>'+
+                            res.data.userDouMsg[key].chatFrom+'</p><a><span class="name">'+
+                            res.data.userDouMsg[key].fromUserInfo.userName+
+                            '</span>&nbsp;&nbsp;<span class="badge" id="needDealSum">'+
+                            res.data.userDouMsg[key].sum+
+                            '</span></a></li>';
+                    sum += res.data.userDouMsg[key].sum;
+                }
+                for(var key in res.data.validateMsg)
+                {
+                    html += '<li class="validateMsgNeedDeal" style="cursor:pointer;"><p class="id" hidden>'+
+                            res.data.validateMsg[key].friendId+'</p><a><span class="name">'+
+                            res.data.validateMsg[key].friendInfo.userName+
+                            '</span>&nbsp;&nbsp;<span class="badge" id="needDealSum">'+
+                            res.data.validateMsg[key].validateInfo+
+                            '</span></a></li>';
+                }
+                sum += eval(res.data.validateMsg).length;
+                // alert(sum);
+                $("#needDealSum").text(sum);
+                $("#allNeedDealMsg").html(html);
+                // for(var key in res.data){
+                //
+                // }
+            }
+        )
+    }
 
 
 };
