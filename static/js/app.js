@@ -12,7 +12,7 @@ var webChat = {
     //当前聊天的人
     activeChatUserId:"",
     //当前聊天记录加载的页数
-    activeChatPageNum:0,
+    activeChatPageNum:-1,
     //所有群聊
     allChatRoom:"",
     //当前聊天群
@@ -21,6 +21,8 @@ var webChat = {
     chatType:0,
     //当前正在处理的用户请求id
     validateUserId:"",
+    //添加群聊成员的群id
+    addChatRoomUserRoomId:"",
     //获取朋友列表
     getMenu: function () {
         var self = this;
@@ -175,6 +177,7 @@ var webChat = {
             $("#addFriendInfo").serializeJson(),
             function(res) {
                 $("#showInfo").showMsg(res.msg);
+
             }
         )
     },
@@ -186,12 +189,15 @@ var webChat = {
                 "chat/getByUser",
                 {userId:app.activeChatUserId},
                 function(res) {
+                    var newDate = new Date();
+
                     for(var key in res.data){
+                        newDate.setTime(res.data[key].chatTime);
                         if(res.data[key].chatType == "抖一抖"){
-                            app.addMsgToDiv('<p style="color:red">对方抖了你一下</p>',"left");
+                            app.addMsgToDiv('<p style="color:red">对方抖了你一下</p>',"left",newDate.toLocaleString());
                             app.shake();
                         }else{
-                            app.addMsgToDiv(res.data[key].chatInfo,"left");
+                            app.addMsgToDiv(res.data[key].chatInfo,"left",newDate.toLocaleString());
                         }
                     }
 
@@ -207,9 +213,10 @@ var webChat = {
                 "chat/getByRoom",
                 {roomId:app.activeChatRoomId},
                 function(res) {
+                    var newDate = new Date();
                     for(var key in res.data){
-
-                        app.addMsgToDiv(res.data[key].fromUserInfo.userName+":"+res.data[key].chatInfo,"left");
+                        newDate.setTime(res.data[key].chatTime);
+                        app.addMsgToDiv(res.data[key].fromUserInfo.userName+":"+res.data[key].chatInfo,"left",newDate.toLocaleString());
                     }
 
                 }
@@ -217,10 +224,11 @@ var webChat = {
         }
     },
     //添加信息到聊天框
-    addMsgToDiv:function(msg,direction) {
+    addMsgToDiv:function(msg,direction,time) {
         var html = '<div class="well well-sm col-sm-6" style="float:'+
                     direction
                     +'">'+
+                    '<p style="font-size:10px">'+time+'</p>'+
                     msg+
                     '</div>'+
                     '<div  style="clear:both;" >';
@@ -228,9 +236,22 @@ var webChat = {
         app.chatDiv.scrollTop(app.chatDiv.position().top+app.chatDiv.scrollTop());
 
     },
+    //历史消息显示
+    addHistoryMsg:function(msg,direction,time){
+        var html = '<div class="well well-sm col-sm-6" style="float:'+
+                    direction
+                    +'">'+
+                    '<p style="font-size:10px">'+time+'</p>'+
+                    msg+
+                    '</div>'+
+                    '<div  style="clear:both;" >';
+        // $("#historyMsgDiv").append(html);
+        $($("#historyMsgDiv").children("div").get(0)).before(html);
+    },
     //发送消息
     sendMsgToUser:function(){
         var self = this;
+        // var timestamp = Date.parse(new Date());
         if(app.chatType == 1 && app.activeChatUserId != ""){
             Ajax(
                 "POST",
@@ -240,7 +261,7 @@ var webChat = {
                     chatTo:app.activeChatUserId
                 },
                 function(res) {
-                    self.addMsgToDiv(app.editor.txt.html(),"right");
+                    self.addMsgToDiv(app.editor.txt.html(),"right",new Date());
                 }
             )
         }else if(app.chatType == 2 && app.activeChatRoomId != ""){
@@ -254,7 +275,7 @@ var webChat = {
                 function(res) {
                     if(res.code == 200){
 
-                        self.addMsgToDiv(app.editor.txt.html(),"right");
+                        self.addMsgToDiv(app.editor.txt.html(),"right",new Date());
                     }
                 }
             )
@@ -265,20 +286,26 @@ var webChat = {
     //发送抖一抖消息
     sharkUser: function(){
         var self = this;
-        if(app.chatType == 1 && app.activeChatUserId != ""){
-            Ajax(
-                "POST",
-                "chat/sharkUser",
-                {
-                    chatTo:app.activeChatUserId
-                },
-                function(res) {
-                    self.addMsgToDiv('<p style="color:red">你抖了对方一下</p>',"right");
-                    self.shake();
-                }
-            )
-        }else {
-            $("#showInfo").showMsg("请先选择聊天的好友");
+        if(app.chatType == 1){
+            if(app.activeChatUserId != ""){
+                Ajax(
+                    "POST",
+                    "chat/sharkUser",
+                    {
+                        chatTo:app.activeChatUserId
+                    },
+                    function(res) {
+                        self.addMsgToDiv('<p style="color:red">你抖了对方一下</p>',"right");
+                        self.shake();
+                    }
+                )
+            }else{
+                $("#showInfo").showMsg("请先选择好友");
+            }
+        }else if(app.chatType == 2){
+            $("#showInfo").showMsg("群消息无法发送抖一抖");
+        }else{
+            $("#showInfo").showMsg("请先选择好友");
         }
     },
     //获取所有群聊
@@ -307,8 +334,17 @@ var webChat = {
                             '<img src="img/bak.jpg" style="height:30px;">'+
                         '</button>'+
                         '<ul class="dropdown-menu">'+
-                            '<li><a onclick="changeStatus(this)" >退出群聊&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>'+
-                            '<li><a onclick="changeStatus(this)" >查看成员&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>'+
+                            '<li class="addChatRoomUser"><span style="display:none" class="roomId">'+
+                            this.allChatRoom[key].roomId+
+                            '</span><a>添加成员&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>'+
+
+                            '<li class="exitChatRoom"><span style="display:none" class="roomId">'+
+                            this.allChatRoom[key].roomId+
+                            '</span><a>退出群聊&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>'+
+
+                            '<li class="roomUserInfo"><span style="display:none" class="roomId">'+
+                            this.allChatRoom[key].roomId+
+                            '</span><a>查看成员&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>'+
                         '</ul>'+
                     '</div>'+
 
@@ -394,6 +430,7 @@ var webChat = {
             }
         )
     },
+    //处理验证消息
     dealValidateMsg:function(status){
         Ajax(
             "POST",
@@ -407,9 +444,147 @@ var webChat = {
                 if(res.code == 200){
                     $("#showInfo").showMsg(res.msg);
                     $("#dealValidateModal").modal("hide");
+                    app.getMenu().getMyInfo().getAllChatRoom();
                 }
             }
         )
+    },
+    //添加群
+    addChatRoom:function(){
+        Ajax(
+            "POST",
+            "chatRoom",
+            $("#chatRoomFrom").serializeJson(),
+            function(res){
+                $("#addChatRoomModal").modal("hide");
+                $("#showInfo").showMsg(res.msg);
+                app.getMenu().getMyInfo().getAllChatRoom();
+            }
+        )
+    },
+    //
+    addChatRoomUserFind:function(){
+        Ajax(
+            "POST","user/search",
+            {key:$("#addChatRoomUserKey").val()},
+            function(res){
+                if(res.code != 200)
+                {
+                    $("#addChatRoomUserModal").modal("hide");
+                }
+                var html = '';
+                for(var key in res.data){
+                    html += '<div class="well well-xs row">'+
+                                '<div class="col-sm-3">'+
+                                    '<div class="btn-group">'+
+
+                                        '<img src="'+res.data[key].userImg+'" style="height:30px;">'+
+
+                                    '</div>'+
+
+                                '</div>'+
+                                '<div class="col-sm-3">'+
+                                    '<strong>'+res.data[key].userName+
+                                    '</strong>'+
+                                '</div>'+
+                                '<div class="col-sm-3">'+
+                                    '<button type="button" id="userStatus" value="'+res.data[key].userId+'" class="btn btn-danger btn-xs addChatRoomUserOk">添加该用户'+
+                                    '</button>'+
+                                '</div>'+
+                            '</div>';
+                }
+                $("#addChatRoomUserRes").html(html);
+            }
+        )
+    },
+    //添加群成员
+    addChatRoomUser:function(userId){
+        Ajax(
+            "POST",
+            "chatRoom/addChatRoomUser",
+            {
+                userId:userId,
+                roomId:app.addChatRoomUserRoomId
+            },
+            function(res){
+                $("#addChatRoomUserModal").modal("hide");
+                $("#showInfo").showMsg(res.msg);
+            }
+        )
+    },
+    //退出群聊
+    exitChatRoom:function(id){
+        Ajax(
+            "POST",
+            "chatRoom/exitChatRoom",
+            {
+                roomId:id
+            },
+            function(res) {
+                $("#showInfo").showMsg(res.msg);
+                app.getMenu().getMyInfo().getAllChatRoom();
+            }
+        )
+    },
+    getRoomUserInfo:function(id){
+        Ajax(
+            "POST",
+            "chatRoom/chatRoomUser",
+            {
+                roomId:id
+            },
+            function(res){
+                var html = '';
+                var i = 1;
+                for(var key in res.data){
+                    html += '<tr>'+
+                        '<td>'+(i++)+'</td>'+
+                        '<td>'+res.data[key].userName+'</td>'+
+                        '<td>'+res.data[key].userType+'</td>'+
+                        '<td>'+
+                        '<button type="button" class="btn btn-danger addFriendBtnOk" value="'+res.data[key].userId+'" data-dismiss="modal">加好友</button>'+'</td>'+
+                    '</tr>';
+                }
+                $("#roomUserInfo").html(html);
+            }
+        )
+    },
+    getHistoryMsgUser:function(){
+        Ajax(
+            "POST",
+            "chat/findHistoryMsg",
+            {
+                userId:app.activeChatUserId,
+                pageNum:app.activeChatPageNum
+            },
+            function(res) {
+                for(var key in res.data){
+                    var newDate = new Date();
+                    newDate.setTime(res.data[key].chatTime);
+                    if(res.data[key].chatFrom == app.myInfo.userId){
+                        app.addHistoryMsg(res.data[key].chatInfo,"right",newDate.toLocaleString());
+                    }else{
+                        app.addHistoryMsg(res.data[key].chatInfo,"left",newDate.toLocaleString());
+                    }
+                }
+                if(eval(res.data).length == 0){
+                    $("#showInfo").showMsg("没有了");
+                    $("#historyMsgModal").modal("hide");
+                }
+            }
+        )
+    },
+    getHistoryMsg:function(){
+        $("#historyMsgDiv").html('<div style="display:none"></div>');
+        app.activeChatPageNum = 0;
+        if(app.chatType == 1){
+            $("#historyMsgModal").modal('show');
+            app.getHistoryMsgUser();
+        }else if(app.chatType == 2){
+            $("#historyMsgModal").modal('show');
+        }else {
+            $("#showInfo").showMsg("请先选择聊天对象");
+        }
     }
 
 

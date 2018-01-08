@@ -47,6 +47,9 @@ $("#addFriend").click(function(){
 $("#addFriendBtn").click(function() {
     app.addFriend();
 });
+$("#addChatRoomUserBtn").click(function() {
+    app.addChatRoomUserFind();
+});
 //添加朋友，显示分组
 $(document).on("click",".addFriendBtnOk",function(){
     $("#addFriendInfoModal").modal("show");
@@ -82,7 +85,7 @@ $(document).on("click",".chatRoomMsgNeedDeal",function(){
     $("#activeUser").html($(this).find(".name").html());
 });
 //开始群聊
-$(document).on("click",".chatRoomClick",function(){
+$(document).on("dblclick",".chatRoomClick",function(){
     app.chatType = 2;
     app.chatDiv.html("");
     app.activeChatRoomId = $(this).children(".chatRoomId").val();
@@ -104,6 +107,27 @@ $(document).on("click",".disAgreeAddFriend",function(){
     app.validateUserId = $(this).val();
     app.dealValidateMsg(-1);
 });
+//添加群聊成员
+$(document).on("click",".addChatRoomUser",function(){
+    app.addChatRoomUserRoomId = $(this).find(".roomId").text();
+    $("#addChatRoomUserModal").modal("show");
+});
+$(document).on("click",".exitChatRoom",function(){
+    var id = $(this).find(".roomId").text();
+    app.exitChatRoom(id);
+    app.chatType = 0;
+});
+$(document).on("click",".roomUserInfo",function(){
+    var id = $(this).find(".roomId").text();
+    $("#chatRoomUserInfoModal").modal("show");
+    app.getRoomUserInfo(id);
+});
+
+//添加成员到群
+$(document).on("click",".addChatRoomUserOk",function(){
+
+    app.addChatRoomUser($(this).val());
+});
 
 //添加朋友确认
 $("#addFriendCommit").click(function(){
@@ -116,9 +140,25 @@ $("#chatInfo").on("scroll",function(){
 
     if(app.chatDiv.scrollTop() == 0)
     {
-        alert("没有了");
+        $("#showInfo").showMsg("没有了,要看更多请查看历史消息");
     }
 });
+$("#historyMsgDiv").on("scroll",function(){
+
+    if($("#historyMsgDiv").scrollTop() == 0)
+    {
+        app.activeChatPageNum++;
+        if(app.chatType == 1){
+            app.getHistoryMsgUser();
+        }else if(app.chatType == 2){
+
+        }
+    }
+});
+$("#historyMsgView").click(function(){
+    
+    app.getHistoryMsg();
+})
 //定时获取当前和朋友的聊天消息
 setInterval(function() {
     app.getMsgWithUser();
@@ -149,3 +189,11 @@ $("#allChatRoomBtn").click(function(){
 $("#agreeValidateBtn").click(function(){
     app.dealValidateMsg(1);
 });
+//添加群的modal
+$("#addChatRoom").click(function(){
+    $("#addChatRoomModal").modal("show");
+})
+//添加群
+$("#addChatRoomBtn").click(function(){
+    app.addChatRoom();
+})

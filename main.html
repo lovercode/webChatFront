@@ -159,12 +159,13 @@
 
                                                   </ul>
                                                 </li>
-                                                <li><a href="#">与朋友的功能</a></li>
+                                                <li id="historyMsgView"><a>历史消息</a></li>
                                                 <li class="dropdown">
                                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">菜单<span class="caret"></span></a>
                                                   <ul class="dropdown-menu">
                                                     <li><a id="addGroup">添加分组</a></li>
                                                     <li><a id="addFriend">添加朋友</a></li>
+                                                    <li><a id="addChatRoom">创建群聊</a></li>
                                                     <li><a href="#">修改自己信息</a></li>
                                                     <li role="separator" class="divider"></li>
                                                     <li><a href="#">退出</a></li>
@@ -315,6 +316,113 @@
             </div>
           </div>
         </div>
+        <!-- 添加群聊 -->
+        <div class="modal fade" id="addChatRoomModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" style="text-align:center">创建群聊</h4>
+              </div>
+              <div class="modal-body">
+                  <form id="chatRoomFrom">
+                    <div class="form-group">
+
+                      <label for="exampleInputEmail1">群名字</label>
+                      <input type="text" id="addFriendKey" class="form-control" name="roomName" placeholder="">
+                      <label for="name">群内描述</label>
+                      <textarea class="form-control" name="roomDes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-primary" id="addChatRoomBtn">添加</button>
+            </div>
+            </div>
+          </div>
+        </div>
+        <!-- 搜索好友 -->
+        <div class="modal fade" id="addChatRoomUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" style="text-align:center">查找朋友</h4>
+              </div>
+              <div class="modal-body">
+                  <!-- <form> -->
+                <div class="form-group">
+                    <input type="text" id="addChatRoomUserKey" class="form-control" placeholder="支持id，名字，邮箱检索">
+                </div>
+                <button id="addChatRoomUserBtn" class="btn btn-default">搜索</button>
+                <br>
+                <br>
+                <br>
+                <!-- </form> -->
+                <div id="addChatRoomUserRes">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <!-- <button type="button" class="btn btn-primary" id="addFriendCommit">添加</button> -->
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 群成员 -->
+        <div class="modal fade" id="chatRoomUserInfoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" style="text-align:center">群成员</h4>
+              </div>
+              <div class="modal-body">
+                  <table class="table table-bordered">
+                  	<caption>群成员</caption>
+                  	<thead>
+                  		<tr>
+                  			<th>序号</th>
+                  			<th>姓名</th>
+                  			<th>来源</th>
+                            <th>操作</th>
+                  		</tr>
+                  	</thead>
+                  	<tbody id="roomUserInfo">
+
+                  	</tbody>
+                  </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 历史消息 -->
+        <div class="modal fade" id="historyMsgModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document" style="width:60%">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" style="text-align:center">历史消息</h4>
+              </div>
+              <div class="modal-body" style="overflow:scroll;height:700px" id="historyMsgDiv">
+                  
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+            </div>
+          </div>
+        </div>
+
+
+
         <script src="static/js/app.js"></script>
         <script src="static/js/webChat.js"></script>
         <script>
