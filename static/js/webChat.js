@@ -11,9 +11,10 @@ $(document).ready(function(){
 $(".changeUserStatus").click(function(){
     alert(1);
 });
-function changeStatus(self) {
-    var status = $(self).html();
-    $("#userStatus").html(status);
+function changeStatus(self,status) {
+    var statusHtml = $(self).html();
+    // $("#userStatus").html(status);
+    app.chengeStatus(status,statusHtml);
 
 };
 //退出
@@ -122,6 +123,13 @@ $(document).on("click",".roomUserInfo",function(){
     $("#chatRoomUserInfoModal").modal("show");
     app.getRoomUserInfo(id);
 });
+function viewFriend(id){
+    $("#viewFriendModal").modal('show');
+    app.viewFriend(id);
+}
+function deleteFriend(id){
+    app.deleteFriend(id);
+}
 
 //添加成员到群
 $(document).on("click",".addChatRoomUserOk",function(){
@@ -151,12 +159,12 @@ $("#historyMsgDiv").on("scroll",function(){
         if(app.chatType == 1){
             app.getHistoryMsgUser();
         }else if(app.chatType == 2){
-
+            app.getRoomHistoryMsgUser();
         }
     }
 });
 $("#historyMsgView").click(function(){
-    
+
     app.getHistoryMsg();
 })
 //定时获取当前和朋友的聊天消息
@@ -197,3 +205,70 @@ $("#addChatRoom").click(function(){
 $("#addChatRoomBtn").click(function(){
     app.addChatRoom();
 })
+$("#uploadFile").click(function(){
+    $('#inputFile').trigger('click');
+})
+$("#inputFile").change(function() {
+    var formData = new FormData($( "#fileUp" )[0]);
+     $.ajax({
+          url: 'http://127.0.0.1:8080/webChat/chat/upload' ,
+          type: 'POST',
+          data: formData,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (res) {
+              var url = res.data;
+              app.editor.txt.append('<a href="'+url+'"><img src="img/file.png" style="width:20px;height20px">文件</a>');
+          },
+          error: function (returndata) {
+              alert(returndata);
+          }
+     });
+})
+$("#updateMyInfo").click(function(){
+    $("#updateMy").modal('show');
+})
+$("#userImgBtn").click(function(){
+    $('#inputFile1').trigger('click');
+});
+$("#inputFile1").change(function() {
+    var formData = new FormData($( "#fileUp1" )[0]);
+     $.ajax({
+          url: 'http://127.0.0.1:8080/webChat/chat/upload' ,
+          type: 'POST',
+          data: formData,
+          async: false,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (res) {
+              $("#userImgBtn").attr("src",res.data);
+              $("#uuserImg").val(res.data);
+          },
+          error: function (returndata) {
+              alert(returndata);
+          }
+     });
+})
+$("#commit").click(function(){
+        Ajax(
+            "POST","user/updateMyInfo",
+            $("#userInfo").serializeJson(),
+            function(res){
+                $("#updateMy").modal('hide');
+                $("#showInfo").showMsg(res.msg);
+                app.getMyInfo();
+            }
+        );
+});
+
+$("#userImg").click(function(){
+    $("#updateMy").modal('show');
+
+})
+
+function deleteGroup(id){
+    app.deleteGroup(id);
+}

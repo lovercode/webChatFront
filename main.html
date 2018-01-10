@@ -41,8 +41,8 @@
                                 <div class="well well-sm">
                                     <!-- 用户信息 -->
                                     <div class="row">
-                                        <div class="col-sm-4" id="userImg">
-                                            <img src="img/bak.jpg" class="img-thumbnail" style="height:100px">
+                                        <div class="col-sm-4" id="userImg" style="cursor:pointer;">
+                                            <img src="img/bak.jpg" id="myImg" class="img-thumbnail" style="height:100px">
                                         </div>
                                         <div class="col-sm-8">
                                             <h3>
@@ -53,9 +53,9 @@
                                                     在线&nbsp;<span class="glyphicon glyphicon-eye-open">
                                                 </button>
                                                 <ul class="dropdown-menu">
-                                                    <li><a onclick="changeStatus(this)" >在线&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>
-                                                    <li><a onclick="changeStatus(this)" >离线&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>
-                                                    <li><a onclick="changeStatus(this)" >下线&nbsp;&nbsp;<span class="glyphicon glyphicon-remove-sign"></a></li>
+                                                    <li><a onclick="changeStatus(this,'在线')" >在线&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>
+                                                    <li><a onclick="changeStatus(this,'离线')" >离线&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>
+                                                    <li><a onclick="changeStatus(this,'下线')" >下线&nbsp;&nbsp;<span class="glyphicon glyphicon-remove-sign"></a></li>
                                                 </ul>
                                             </div>
                                             <button type="button" id="userLogout" onclick="logOut()" class="btn btn-danger btn-xs">
@@ -144,10 +144,10 @@
                                                     <li role="presentation"><a href="#">Messages</a></li>
                                                 </ul> -->
                                               <form class="navbar-form navbar-left">
-                                                <div class="form-group">
+                                                <!-- <div class="form-group">
                                                   <input type="text" class="form-control" placeholder="Search">
                                                 </div>
-                                                <button type="submit" class="btn btn-default">搜索</button>
+                                                <button type="submit" class="btn btn-default">搜索</button> -->
                                               </form>
                                               <ul class="nav navbar-nav navbar-right">
                                                 <li><a style="cursor:pointer;" id="sharkUser">抖一抖</a></li>
@@ -159,16 +159,17 @@
 
                                                   </ul>
                                                 </li>
-                                                <li id="historyMsgView"><a>历史消息</a></li>
+
+                                                <li id="historyMsgView" style="cursor:pointer;"><a>历史消息</a></li>
                                                 <li class="dropdown">
                                                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">菜单<span class="caret"></span></a>
                                                   <ul class="dropdown-menu">
-                                                    <li><a id="addGroup">添加分组</a></li>
-                                                    <li><a id="addFriend">添加朋友</a></li>
-                                                    <li><a id="addChatRoom">创建群聊</a></li>
-                                                    <li><a href="#">修改自己信息</a></li>
+                                                    <li style="cursor:pointer;"><a id="addGroup">添加分组</a></li>
+                                                    <li style="cursor:pointer;"><a id="addFriend">添加朋友</a></li>
+                                                    <li style="cursor:pointer;"><a id="addChatRoom">创建群聊</a></li>
+                                                    <li style="cursor:pointer;"><a id="updateMyInfo">修改自己信息</a></li>
                                                     <li role="separator" class="divider"></li>
-                                                    <li><a href="#">退出</a></li>
+                                                    <li style="cursor:pointer;"><a href="#">退出</a></li>
                                                   </ul>
                                                 </li>
                                               </ul>
@@ -193,6 +194,9 @@
                                         </div>
                                         <button type="button" id="sendMsg" class="btn btn-danger btn-lg" >
                                             发送
+                                        </button>
+                                        <button type="button" id="uploadFile" class="btn btn-primary btn-lg" >
+                                            上传文件
                                         </button>
 
 
@@ -412,7 +416,7 @@
                 <h4 class="modal-title" style="text-align:center">历史消息</h4>
               </div>
               <div class="modal-body" style="overflow:scroll;height:700px" id="historyMsgDiv">
-                  
+
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -421,7 +425,140 @@
           </div>
         </div>
 
+        <!-- 查看好友名片 -->
+        <div class="modal fade" id="viewFriendModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" style="text-align:center">朋友名片</h4>
+              </div>
+              <div class="modal-body">
+                  <div class="well well-sm">
+                      <!-- 用户信息 -->
+                      <div class="row">
+                          <div class="col-sm-3">
+                              <img src="img/bak.jpg" id="friendImg" class="img-thumbnail" style="height:100px">
+                          </div>
+                          <div class="col-sm-8">
+                              <h3>
+                              <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                              <span id="friendName">name</span>
+                              <div class="btn-group">
+                                  <button type="button" id="friendStatus" class="btn btn-info btn-xs" aria-haspopup="true" aria-expanded="false">
+                                      在线&nbsp;<span class="glyphicon glyphicon-eye-open">
+                                  </button>
+                              </div>
+                              </h3>
+                              <strong>
+                                  <span class="glyphicon glyphicon-envelope"></span>
+                                  <a id="friendEmail"></a>
+                              </strong>
+                              <br>
+                              <strong>
+                                  <span>年龄</span>
+                                  <a id="friendAge"></a>
+                              </strong>
+                              <br>
+                              <strong>
+                                  <span>真实姓名</span>
+                                  <a id="friendRealName"></a>
+                              </strong>
+                              <br>
 
+                          </div>
+                      </div>
+                      <br>
+                      <div>
+                          <blockquote class="">
+                            <p id="friendWord">如果你有梦想，就要去捍卫它</p>
+                            <footer id="friendWordName" class="blockquote-reverse"></footer>
+                          </blockquote>
+                      </div>
+
+                  </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="updateMy" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">更新自己信息</h4>
+              </div>
+              <div class="modal-body">
+                  <form id="userInfo">
+                     <div class="form-group" style="margin:auto;text-align:center">
+                        <img src="img/bak.jpg" style="width:100px;height:100px;cursor:pointer;"  id="userImgBtn">
+
+                    </div>
+
+                    <div class="form-group">
+                      <input type="hidden" class="form-control" name="userImg" value="img/bak.jpg" id="uuserImg" placeholder="用户名">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">用户名</label>
+                      <input type="text" class="form-control" name="userName" id="uuserName" placeholder="用户名">
+                    </div>
+                    <!-- <div class="form-group">
+                      <label for="exampleInputPassword1">密码</label>
+                      <input type="password" class="form-control" name="userPassword" id="uuserPassword1" placeholder="密码">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">确认密码</label>
+                      <input type="password" class="form-control" id="uuserPasswordR" placeholder="确认密码">
+                      <p hiddeun id="uinfo" style="color:red;"></p>
+                    </div> -->
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">年龄</label>
+                      <input type="text" class="form-control" name="userAge" id="uuserAge" placeholder="年龄">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">真实姓名</label>
+                      <input type="text" class="form-control" name="userRealName" id="uuserRealName" placeholder="真实姓名">
+                    </div>
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">邮箱</label>
+                      <input type="text" class="form-control" name="userEmail" id="uuserEmail" placeholder="邮箱">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleInputPassword1">QQ</label>
+                      <input type="text" class="form-control" name="userQq" id="uuserQq" placeholder="QQ">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">我的签名</label>
+                        <textarea class="form-control" name="userWord" id="uuserWord" rows="3"></textarea>
+                    </div>
+                  </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="commit">更新</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form id="fileUp" style="display:none">
+            <input type="file" name="file" style="display:none" id="inputFile">
+        </form>
+        <form id="fileUp1" style="display:none">
+            <input type="file" name="file" style="display:none" id="inputFile1">
+        </form>
+
+
+
+        <!-- <form action="http://127.0.0.1:8080/webChat/chat/upload" enctype="multipart/form-data" method="POST">
+            <input type="file" name="file" />
+            <input type="submit" value="提交">
+        </form> -->
 
         <script src="static/js/app.js"></script>
         <script src="static/js/webChat.js"></script>
@@ -432,7 +569,7 @@
         app.editor.customConfig.zIndex = 1;
         app.editor.create();
         app.chatDiv = $("#chatInfo");
-
+        $("#myModal").modal("show");
         </script>
     </body>
 </html>

@@ -51,7 +51,18 @@ var webChat = {
         {
             html += '<div style="clear:both">'+
                 '<div style="width:40%;float:left;margin:0px;padding:0px;"><hr style="height:20px;"/></div>'+
-                '<div style="width:20%;float:left;text-align:center"><a name="'+this.friends[key].gFgroup.groupId+'">'+this.friends[key].gFgroup.groupName+'</a></div>'+
+                '<div style="width:20%;float:left;text-align:center">'+
+                    '<div class="btn-group">'+
+
+                        '<a class="dropdown-toggle" style="cursor:pointer;" data-toggle="dropdown" name="'+this.friends[key].gFgroup.groupId+'">'+this.friends[key].gFgroup.groupName+'</a>'+
+                        '<ul class="dropdown-menu">'+
+                            '<li><a style="cursor:pointer;" onclick="deleteGroup(\''+this.friends[key].gFgroup.groupId+'\')">删除分组&nbsp;&nbsp;<span class="glyphicon glyphicon-remove-sign"></span></a></li>'+
+                            // '<li><a onclick="deleteFriend(\''+this.friends[key].friends[key1].friendId+'\')">删除好友&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>'+
+                            // '<li><a onclick="changeStatus(this)" >拉黑好友&nbsp;&nbsp;<span class="glyphicon glyphicon-remove-sign"></a></li>'+
+                        '</ul>'+
+                    '</div>'+
+
+                '</div>'+
                 '<div style="width:40%;float:right;margin:0px;padding:0px;"><hr style="height:20px;"/></div>'+
                 '</div>';
             mao += '<li><a href="#'+this.friends[key].gFgroup.groupId+'">'+this.friends[key].gFgroup.groupName+'</a></li>';
@@ -62,19 +73,19 @@ var webChat = {
                         '<input type="hidden" class="userId" value="'+this.friends[key].friends[key1].friendId+'">'+
                         '<div class="col-sm-3">'+
                             '<div class="btn-group">'+
-                                '<button type="button" id="userStatus" class="btn btn-primay btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
-                                    '<img src="img/bak.jpg" style="height:30px;">'+
-                                '</button>'+
+                                // '<button type="button" id="userStatus" class="btn btn-primay btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+                                    '<img class="dropdown-toggle" data-toggle="dropdown" src="'+this.friends[key].friends[key1].friendInfo.userImg+'" style="width:50px;height:50px;border-radius:50%;">'+
+                                // '</button>'+
                                 '<ul class="dropdown-menu">'+
-                                    '<li><a onclick="changeStatus(this)" >查看信息&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>'+
-                                    '<li><a onclick="changeStatus(this)" >删除好友&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>'+
-                                    '<li><a onclick="changeStatus(this)" >拉黑好友&nbsp;&nbsp;<span class="glyphicon glyphicon-remove-sign"></a></li>'+
+                                    '<li><a onclick="viewFriend(\''+this.friends[key].friends[key1].friendId+'\')">查看信息&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>'+
+                                    '<li><a onclick="deleteFriend(\''+this.friends[key].friends[key1].friendId+'\')">删除好友&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>'+
+                                    // '<li><a onclick="changeStatus(this)" >拉黑好友&nbsp;&nbsp;<span class="glyphicon glyphicon-remove-sign"></a></li>'+
                                 '</ul>'+
                             '</div>'+
 
                         '</div>'+
                         '<strong class="friendName">'+this.friends[key].friends[key1].friendInfo.userName+
-
+                        '('+this.friends[key].friends[key1].friendInfo.userStatus+')'+
                         '</strong>'+
                         '<p>'+
                         this.friends[key].friends[key1].friendInfo.userWord+
@@ -94,9 +105,20 @@ var webChat = {
         $("#userName").html(this.myInfo.userName);
         $("#userEmail").html(this.myInfo.userEmail);
         $("#userWord").html(this.myInfo.userWord);
-
+        $("#myImg").attr("src",this.myInfo.userImg);
         $("#userEmail").attr("href","mailto:"+this.myInfo.userEmail);
         $("#userWordName").html(this.myInfo.userName);
+        $("#userStatus").text(this.myInfo.userStatus);
+
+        $("#uuserName").val(this.myInfo.userName);
+        $("#uuserAge").val(this.myInfo.userAge);
+        $("#uuserRealName").val(this.myInfo.userRealName);
+        $("#uuserQq").val(this.myInfo.userQq);
+        $("#uuserWord").val(this.myInfo.userWord);
+        $("#userImgBtn").attr("src",this.myInfo.userImg);
+        $("#uuserImg").val(this.myInfo.userImg);
+
+
 
     },
     //改变状态
@@ -216,7 +238,21 @@ var webChat = {
                     var newDate = new Date();
                     for(var key in res.data){
                         newDate.setTime(res.data[key].chatTime);
-                        app.addMsgToDiv(res.data[key].fromUserInfo.userName+":"+res.data[key].chatInfo,"left",newDate.toLocaleString());
+                        var html =
+                        '<div class="btn-group">'+
+
+                                '<img class="dropdown-toggle" data-toggle="dropdown" src="'+res.data[key].fromUserInfo.userImg+'" style="width:40px;height:40px;border-radius:50%;">&nbsp;&nbsp;&nbsp;'+
+
+                            '<ul class="dropdown-menu">'+
+                                '<li><a onclick="viewFriend(\''+res.data[key].chatFrom+'\')">查看信息&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>'+
+                                '<li><a onclick="deleteFriend(\''+res.data[key].chatFrom+'\')">删除好友&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>'+
+                            '</ul>'+
+                        '</div><b>'+
+                        res.data[key].fromUserInfo.userName+
+                        '</b>&nbsp;&nbsp;&nbsp;<button type="button" value="'+res.data[key].chatFrom+'" class="btn btn-primary btn-xs addFriendBtnOk"><span class="glyphicon glyphicon-plus"></span>'+
+                        '</button>'+
+                        "<br><br>";
+                        app.addMsgToDiv(html+res.data[key].chatInfo,"left",newDate.toLocaleString());
                     }
 
                 }
@@ -295,7 +331,7 @@ var webChat = {
                         chatTo:app.activeChatUserId
                     },
                     function(res) {
-                        self.addMsgToDiv('<p style="color:red">你抖了对方一下</p>',"right");
+                        self.addMsgToDiv('<p style="color:red">你抖了对方一下</p>',"right",new Date());
                         self.shake();
                     }
                 )
@@ -326,13 +362,13 @@ var webChat = {
     showAllChatRoom:function(){
         var html = '';
         for(var key in this.allChatRoom){
-            html += '<div class="well well-xs chatRoomClick" style="clear:both;cursor:pointer;">'+
+            html += '<div class="well well-xs chatRoomClick row" style="clear:both;cursor:pointer;">'+
                     '<input type="hidden" class="chatRoomId" value="'+this.allChatRoom[key].roomId+'">'+
                     '<div class="col-sm-3">'+
                     '<div class="btn-group">'+
-                        '<button type="button" id="userStatus" class="btn btn-primay btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
-                            '<img src="img/bak.jpg" style="height:30px;">'+
-                        '</button>'+
+                        // '<button type="button" id="userStatus" class="btn btn-primay btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+                            '<img class="dropdown-toggle" data-toggle="dropdown"  src="img/bak.jpg" style="height:50px;width:50px;border-radius:50%;">'+
+                        // '</button>'+
                         '<ul class="dropdown-menu">'+
                             '<li class="addChatRoomUser"><span style="display:none" class="roomId">'+
                             this.allChatRoom[key].roomId+
@@ -574,6 +610,47 @@ var webChat = {
             }
         )
     },
+    getRoomHistoryMsgUser:function(){
+        Ajax(
+            "POST",
+            "chat/findRoomHistoryMsg",
+            {
+                roomId:app.activeChatRoomId,
+                pageNum:app.activeChatPageNum
+            },
+            function(res) {
+                for(var key in res.data){
+                    var newDate = new Date();
+                    newDate.setTime(res.data[key].chatTime);
+                    // var html = '<img src="'+res.data[key].fromUserInfo.userImg+'" style="width:30px;height:30px;border-radius:50%;">&nbsp;&nbsp;&nbsp;'+res.data[key].fromUserInfo.userName+":<br><br>";
+                    var html =
+                    '<div class="btn-group">'+
+
+                            '<img class="dropdown-toggle" data-toggle="dropdown" src="'+res.data[key].fromUserInfo.userImg+'" style="width:40px;height:40px;border-radius:50%;">&nbsp;&nbsp;&nbsp;'+
+
+                        '<ul class="dropdown-menu">'+
+                            '<li><a onclick="viewFriend(\''+res.data[key].chatFrom+'\')">查看信息&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-open"></span></a></li>'+
+                            '<li><a onclick="deleteFriend(\''+res.data[key].chatFrom+'\')">删除好友&nbsp;&nbsp;<span class="glyphicon glyphicon-eye-close"></a></li>'+
+                        '</ul>'+
+                    '</div><b>'+
+                    // '<img src="'+res.data[key].fromUserInfo.userImg+'" style="width:30px;height:30px;border-radius:50%;">&nbsp;&nbsp;&nbsp;<b>'+
+                    res.data[key].fromUserInfo.userName+
+                    '</b>&nbsp;&nbsp;&nbsp;<button type="button" value="'+res.data[key].chatFrom+'" class="btn btn-primary btn-xs addFriendBtnOk"><span class="glyphicon glyphicon-plus"></span>'+
+                    '</button>'+
+                    "<br><br>";
+                    if(res.data[key].chatFrom == app.myInfo.userId){
+                        app.addHistoryMsg(html+res.data[key].chatInfo,"right",res.data[key].fromUserInfo.userName+":"+newDate.toLocaleString());
+                    }else{
+                        app.addHistoryMsg(html+res.data[key].chatInfo,"left",res.data[key].fromUserInfo.userName+":"+newDate.toLocaleString());
+                    }
+                }
+                if(eval(res.data).length == 0){
+                    $("#showInfo").showMsg("没有了");
+                    $("#historyMsgModal").modal("hide");
+                }
+            }
+        )
+    },
     getHistoryMsg:function(){
         $("#historyMsgDiv").html('<div style="display:none"></div>');
         app.activeChatPageNum = 0;
@@ -582,9 +659,71 @@ var webChat = {
             app.getHistoryMsgUser();
         }else if(app.chatType == 2){
             $("#historyMsgModal").modal('show');
+            app.getRoomHistoryMsgUser();
+
         }else {
             $("#showInfo").showMsg("请先选择聊天对象");
         }
+    },
+    deleteFriend(id){
+        Ajax(
+            "POST",
+            "friend/deleteFriend",
+            {
+                friendId:id
+            },
+            function(res){
+                $("#showInfo").showMsg(res.msg);
+                app.getMenu().getMyInfo().getAllChatRoom();
+            }
+
+        )
+    },
+    viewFriend:function(id){
+        Ajax(
+            "POST",
+            "friend/getFriendById",
+            {
+                friendId:id
+            },
+            function(res){
+                $("#friendImg").attr("src",res.data.userImg);
+                $("#friendName").html(res.data.userName);
+                $("#friendEmail").text(res.data.userEmail);
+                $("#friendEmail").attr("href","mailto:"+res.data.userEmail);
+                $("#friendWord").html(res.data.userWord);
+                $("#friendWordName").html(res.data.userName);
+                $("#friendAge").html(res.data.userAge);
+                $("#friendStatus").html(res.data.userStatus);
+                $("#friendRealName").html(res.data.userRealName);
+            }
+        )
+    },
+    deleteGroup:function(id){
+        Ajax(
+            "POST",
+            "fgroup/delete",
+            {
+                groupId:id
+            },
+            function(res){
+                $("#showInfo").showMsg(res.msg);
+            }
+        )
+    },
+    chengeStatus:function(status,html){
+        Ajax(
+            "POST","user/updateMyInfo",
+            {
+                userStatus:status
+            },
+            function(res){
+                if(res.code == 200){
+                    $("#userStatus").html(html);
+                }
+                app.getMyInfo();
+            }
+        );
     }
 
 

@@ -23,6 +23,9 @@ function Ajax(type, url, data, success, failed){
                 success(res);
 
             },
+            error:function(res){
+                $("#showInfo").showMsg("服务器错误");
+            }
 
     });
 }
@@ -95,4 +98,4 @@ $.fn.showMsg = function (msg) {
       }
     }
   });
-})(jQuery); 
+})(jQuery);
